@@ -28,7 +28,7 @@
      * Handles the submit button click.
      */
     const handleSubmit = (): void => {
-        if (content == starle?.name) {
+        if (content.toUpperCase() == starle?.name.toUpperCase()) {
             alert("Correct!");
             starle = $starles.shift();
             content = "";
@@ -38,7 +38,7 @@
     }
 </script>
 
-<div>
+<div class="game">
     <div>
         {#if starle && starle.movies}
             {#each starle.movies as movie (movie.title)}
@@ -48,7 +48,7 @@
             {/each}
         {/if}
     </div>
-    <div class="chat">
+    <div class="searchbar">
         <textarea bind:value={content} on:keydown={handleKeydown} placeholder="Enter actor/actress name..." />
         <button on:click={handleSubmit} type="button" title="Send">
             <Fa icon={faPaperPlane} color='#89b4fa' />
@@ -57,7 +57,13 @@
 </div>
 
 <style>
-    .chat {
+    .game {
+        display: flex;
+        flex-direction: column;
+        row-gap: 34px;  
+    }
+
+    .searchbar {
         position: relative;
         bottom: 21px;
         display: flex;
@@ -68,7 +74,7 @@
         z-index: 100; /* Ensure it's above other elements */
         width: 100%;
         max-width: 680px; /* Adjust based on your design preference */
-        margin: 0 auto; /* Center the chat container if it has a max-width */
+        margin: 0 auto; /* Center the searchbar container if it has a max-width */
         box-sizing: border-box;
     }
 

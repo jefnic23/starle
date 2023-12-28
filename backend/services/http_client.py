@@ -4,7 +4,7 @@ import aiohttp
 
 
 async def get_async(url: str, headers: dict[str, Any]) -> dict[str, Any]:
-    """Makes an asynchronous GET request."""
+    """Asynchronously perform a GET request to a URL with specified headers and return the JSON response."""
     async with aiohttp.ClientSession() as client:
         async with client.get(url, headers=headers) as res:
             if res.status not in [200, 201]:

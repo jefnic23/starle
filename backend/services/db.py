@@ -8,13 +8,14 @@ from backend.schemas.actor import Actor
 
 @lru_cache()
 def get_actors() -> list[Actor]:
-    with closing(sqlite3.connect("backend/actors.db")) as connection:
+    """Retrieve a cached list of all actors from the `actors` table in the SQLite database."""
+    with closing(sqlite3.connect("backend/starle.db")) as connection:
         with closing(connection.cursor()) as cursor:
-            rows = cursor.execute("SELECT * FROM actors").fetchall()
-            return [Actor(**_row_to_dict(row, cursor)) for row in rows]
+            cursor.row_factory = _actor_factory
+            return cursor.execute("SELECT * FROM actors").fetchall()
 
 
-def _row_to_dict(row: Any, cursor: sqlite3.Cursor):
-    """Convert a database row to a dictionary keyed by column names."""
+def _actor_factory(cursor: sqlite3.Cursor, row: Any) -> Actor:
+    """Create an Actor instance from a database row using cursor metadata."""
     columns = [col[0] for col in cursor.description]
-    return dict(zip(columns, row))
+    return Actor(**dict(zip(columns, row)))

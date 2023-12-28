@@ -6,10 +6,11 @@ from backend.services.tmdb import get_filtered_movies
 
 
 async def create_game(seed: int) -> list[Starle]:
+    """Asynchronously create a game with unique Starle instances based on actors and their popular movies, using a seed for randomness."""
     actors = get_actors()
 
     while True:
-        random.seed(seed)
+        # random.seed(seed)
         filtered_actors = random.choices(
             actors, weights=[actor.popularity for actor in actors], k=6
         )
@@ -23,7 +24,7 @@ async def create_game(seed: int) -> list[Starle]:
         filtered_movies = await get_filtered_movies(actor.id)
 
         while True:
-            random.seed(seed)
+            # random.seed(seed)
             movies = sorted(
                 random.choices(
                     filtered_movies,

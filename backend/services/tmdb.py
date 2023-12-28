@@ -1,32 +1,40 @@
 from fake_useragent import UserAgent
 
 from backend.config import settings
-from backend.schemas.people import Person, TmdbResponse
+from backend.enums import MovieExclusiveGenres
+from backend.schemas.credits import CastMember, Credits
 from backend.services.http_client import get_async
 
+MOVIE_EXCLUSIVE_GENRES = [genre.value for genre in MovieExclusiveGenres]
 
-async def get_trending_people() -> TmdbResponse:
-    """Get the trending people on TMDB."""
+
+async def get_movie_credits(actor_id: int) -> Credits:
+    """Get the movie credits for a person."""
 
     headers = {
         "User-Agent": UserAgent().random,
         "Authorization": f"Bearer {settings.API_READ_ACCESS_TOKEN}",
     }
 
-    url = "https://api.themoviedb.org/3/trending/person/day?language=en-US"
+    url = f"https://api.themoviedb.org/3/person/{actor_id}/movie_credits?language=en-US"
     req = await get_async(url, headers)
     if req:
-        return TmdbResponse(**req)
+        return Credits(**req)
     else:
         print("Error getting game data")
         return None
 
 
-def filter_actors(people: list[Person]) -> list[Person]:
+def filter_movies(movies: list[CastMember]) -> list[CastMember]:
     return [
-        person
-        for person in people
-        if person.known_for_department == "Acting"
-        and not any(known_for.media_type == "tv" for known_for in person.known_for)
-        and not any(known_for.poster_path is None for known_for in person.known_for)
+        movie
+        for movie in movies
+        if movie.adult is False
+        and movie.video is False
+        and movie.release_date
+        and movie.poster_path
+        and movie.popularity >= 20.0
+        and all(
+            genre_id.value in MOVIE_EXCLUSIVE_GENRES for genre_id in movie.genre_ids
+        )
     ]

@@ -1,6 +1,6 @@
-from functools import lru_cache
 import sqlite3
 from contextlib import closing
+from functools import lru_cache
 from typing import Any
 
 from backend.schemas.actor import Actor

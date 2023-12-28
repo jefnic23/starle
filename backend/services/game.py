@@ -1,20 +1,15 @@
 import random
-import sqlite3
-from contextlib import closing
-from typing import Any
 
-from backend.schemas.actor import Actor
 from backend.schemas.starle import Movie, Starle
-from backend.services.tmdb import filter_movies, get_movie_credits
+from backend.services.db import get_actors
+from backend.services.tmdb import get_filtered_movies
 
 
-async def create_game() -> list[Starle]:
-    with closing(sqlite3.connect("backend/actors.db")) as connection:
-        with closing(connection.cursor()) as cursor:
-            rows = cursor.execute("SELECT * FROM actors").fetchall()
-            actors = [Actor(**_row_to_dict(row, cursor)) for row in rows]
+async def create_game(seed: int) -> list[Starle]:
+    actors = get_actors()
 
     while True:
+        random.seed(seed)
         filtered_actors = random.choices(
             actors, weights=[actor.popularity for actor in actors], k=6
         )
@@ -25,11 +20,10 @@ async def create_game() -> list[Starle]:
     starles = []
 
     for actor in filtered_actors:
-        movie_credits = await get_movie_credits(actor.id)
-
-        filtered_movies = filter_movies(movie_credits.cast)
+        filtered_movies = await get_filtered_movies(actor.id)
 
         while True:
+            random.seed(seed)
             movies = sorted(
                 random.choices(
                     filtered_movies,
@@ -59,9 +53,3 @@ async def create_game() -> list[Starle]:
         starles.append(starle)
 
     return starles
-
-
-def _row_to_dict(row: Any, cursor: sqlite3.Cursor):
-    """Convert a database row to a dictionary keyed by column names."""
-    columns = [col[0] for col in cursor.description]
-    return dict(zip(columns, row))

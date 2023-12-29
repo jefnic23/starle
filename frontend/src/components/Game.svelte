@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Starle } from "../types/starle.type";
-    import { currentStarle, starles, names } from "../stores/game.store"; 
+    import { starles, names } from "../stores/game.store"; 
 
     import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
     import Fa from "./Fa.svelte";
@@ -11,7 +11,17 @@
         starle = $starles.shift();
     }
 
-    let content: string = "";
+    let searchTerm: string = "";
+    let suggestions: string[] = [];
+
+    // Reactive statement to update suggestions
+    $: if (searchTerm.trim() !== '') {
+        suggestions = $names.filter(name => 
+            name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    } else {
+        suggestions = [];
+    }
 
     /**
      * Trigger the handleSubmit function on `enter`
@@ -28,10 +38,10 @@
      * Handles the submit button click.
      */
     const handleSubmit = (): void => {
-        if (content.toUpperCase() == starle?.name.toUpperCase()) {
+        if (searchTerm.toUpperCase() == starle?.name.toUpperCase()) {
             alert("Correct!");
             starle = $starles.shift();
-            content = "";
+            searchTerm = "";
         } else {
             alert("Wrong.");
         }
@@ -49,10 +59,17 @@
         {/if}
     </div>
     <div class="searchbar">
-        <textarea bind:value={content} on:keydown={handleKeydown} placeholder="Enter actor/actress name..." />
+        <textarea bind:value={searchTerm} on:keydown={handleKeydown} placeholder="Search for an actor..."/>
         <button on:click={handleSubmit} type="button" title="Send">
             <Fa icon={faPaperPlane} color='#89b4fa' />
         </button>
+        {#if suggestions.length > 0}
+            <ul>
+                {#each suggestions as suggestion}
+                    <li>{suggestion}</li>
+                {/each}
+            </ul>
+        {/if}
     </div>
 </div>
 
@@ -96,5 +113,27 @@
         background-color: transparent; 
         cursor: pointer;
         outline: none;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        border: 1px solid #ccc;
+        border-top: none; /* Remove top border to blend with the input */
+        border-radius: 0 0 4px 4px;
+        max-height: 200px;
+        overflow-y: auto; /* Enable scroll for long lists */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    li {
+        padding: 10px;
+        border-top: 1px solid #eee;
+        cursor: pointer;
+    }
+
+    li:hover {
+        background-color: #f5f5f5;
     }
 </style>

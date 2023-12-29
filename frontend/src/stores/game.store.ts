@@ -4,3 +4,4 @@ import type { Starle } from '../types/starle.type';
 
 export const starles: Writable<Starle[]> = writable([]);
 export const currentStarle: Writable<Starle> = writable();
+export const names: Writable<string[]> = writable([]);

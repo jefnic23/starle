@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Starle } from "../types/starle.type";
-    import { currentStarle, starles } from "../stores/game.store";   
+    import { currentStarle, starles, names } from "../stores/game.store"; 
 
     import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
     import Fa from "./Fa.svelte";

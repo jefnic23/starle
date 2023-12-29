@@ -15,6 +15,17 @@ def get_actors() -> list[Actor]:
             return cursor.execute("SELECT * FROM actors WHERE viable = 1").fetchall()
 
 
+@lru_cache()
+def get_actor_names() -> list[str]:
+    """Cache and retrieve a list of names of viable actors from the database."""
+    with closing(sqlite3.connect("backend/starle.db")) as connection:
+        with closing(connection.cursor()) as cursor:
+            results = cursor.execute(
+                "SELECT name FROM actors WHERE viable = 1"
+            ).fetchall()
+            return [result[0] for result in results]
+
+
 def update_actor(actor: Actor) -> None:
     """Update the `viable` status of an actor in the database."""
     with closing(sqlite3.connect("backend/starle.db")) as connection:

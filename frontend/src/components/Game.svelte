@@ -46,6 +46,11 @@
             alert("Wrong.");
         }
     }
+
+    const selectSuggestion = (suggestion: string) => {
+        searchTerm = suggestion;
+        suggestions = []; // Optionally hide the suggestion list
+    }
 </script>
 
 <div class="game">
@@ -63,21 +68,25 @@
         <button on:click={handleSubmit} type="button" title="Send">
             <Fa icon={faPaperPlane} color='#89b4fa' />
         </button>
-        {#if suggestions.length > 0}
-            <ul>
-                {#each suggestions as suggestion}
-                    <li>{suggestion}</li>
-                {/each}
-            </ul>
-        {/if}
     </div>
+    {#if suggestions.length > 0}
+        <ul>
+            {#each suggestions as suggestion}
+                <li on:click={() => selectSuggestion(suggestion)}>{suggestion}</li>
+            {/each}
+        </ul>
+    {/if}
 </div>
 
 <style>
     .game {
+        position: relative;
+        max-width: 680px;
+        margin: 0 auto;
         display: flex;
         flex-direction: column;
         row-gap: 34px;  
+        width: 100%;
     }
 
     .searchbar {
@@ -116,24 +125,19 @@
     }
 
     ul {
+        position: absolute;
+        top: 100%;
+        width: 100%;
         list-style-type: none;
-        padding: 0;
-        margin: 0;
-        border: 1px solid #ccc;
-        border-top: none; /* Remove top border to blend with the input */
-        border-radius: 0 0 4px 4px;
-        max-height: 200px;
-        overflow-y: auto; /* Enable scroll for long lists */
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        text-align: left;
+        margin: 0 auto;
+        max-width: 680px;
+        max-height: 440px;
+        overflow-y: hidden;
     }
 
     li {
         padding: 10px;
-        border-top: 1px solid #eee;
         cursor: pointer;
-    }
-
-    li:hover {
-        background-color: #f5f5f5;
     }
 </style>

@@ -38,6 +38,7 @@ async def create_game(seed: int) -> list[Starle]:
                     filtered_movies,
                     size=3,
                     replace=False,
+                    # TODO: include order in weights
                     p=_get_weights([movie.vote_count for movie in filtered_movies]),
                 ),
                 key=lambda movie: movie.vote_count,

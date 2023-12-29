@@ -12,7 +12,17 @@ def get_actors() -> list[Actor]:
     with closing(sqlite3.connect("backend/starle.db")) as connection:
         with closing(connection.cursor()) as cursor:
             cursor.row_factory = _actor_factory
-            return cursor.execute("SELECT * FROM actors").fetchall()
+            return cursor.execute("SELECT * FROM actors WHERE viable = 1").fetchall()
+
+
+def update_actor(actor: Actor) -> None:
+    """Update the `viable` status of an actor in the database."""
+    with closing(sqlite3.connect("backend/starle.db")) as connection:
+        with closing(connection.cursor()) as cursor:
+            cursor.execute(
+                "UPDATE actors SET viable = ? WHERE id = ?", (actor.viable, actor.id)
+            )
+            connection.commit()
 
 
 def _actor_factory(cursor: sqlite3.Cursor, row: Any) -> Actor:

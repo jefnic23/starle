@@ -6,3 +6,4 @@ class Actor(BaseModel):
     name: str
     gender: str
     popularity: float
+    viable: int

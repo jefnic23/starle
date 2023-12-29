@@ -39,7 +39,7 @@ def _filter_movies(movies: list[CastMember]) -> list[CastMember]:
         and movie.video is False
         and movie.release_date
         and movie.poster_path
-        and movie.popularity >= 20.0
+        and movie.vote_count >= 250
         and all(
             genre_id.value in MOVIE_EXCLUSIVE_GENRES for genre_id in movie.genre_ids
         )

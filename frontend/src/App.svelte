@@ -5,6 +5,7 @@
     import { starles, names } from "./stores/game.store";
 	import Game from "./components/Game.svelte";
 	import type { Starle } from "./types/starle.type";
+	import { fade } from "svelte/transition";
 
 	let isLoading: boolean = true;
 
@@ -27,11 +28,13 @@
 
 <main>
 	{#if isLoading}
-		<div class="loading-screen">
+		<div class="loading-screen" in:fade={{ duration: 500 }}>
 			Loading...
 		</div>
 	{:else}
-		<Game />
+		<div class="game-container" in:fade={{ duration: 500 }}>
+			<Game />
+		</div>
 	{/if}
 </main>
 
@@ -42,6 +45,5 @@
         align-items: center;
         height: 100vh;
         font-size: 2em;
-        /* Add more styles as needed */
     }
 </style>

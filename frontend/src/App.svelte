@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from "svelte";
 	import { getAsync } from "./utils/http.util"
 	import { getDateSeed } from "./utils/date.util";
     import { starles, names } from "./stores/game.store";
@@ -7,35 +6,26 @@
 	import type { Starle } from "./types/starle.type";
 	import { fade } from "svelte/transition";
 
-	let isLoading: boolean = true;
-
-	onMount(async () => {
+	const loadData = async (): Promise<void> => {
 		// todo: save data to localStorage and prevent multiple api calls
-		try {
-			let starles_data = await getAsync<Starle[]>(`/api/starle?seed=${getDateSeed()}`);
-			$starles = starles_data;
+		let starles_data = await getAsync<Starle[]>(`/api/starle?seed=${getDateSeed()}`);
+		$starles = starles_data;
 
-			let names_data = await getAsync<string[]>('/api/names');
-			$names = names_data;
-		} catch (error) {
-            console.error('Error loading data:', error);
-            // Handle error appropriately
-        } finally {
-            isLoading = false; // Set loading to false when data is loaded or in case of error
-        }
-	});
+		let names_data = await getAsync<string[]>('/api/names');
+		$names = names_data;
+	}
 </script>
 
 <main>
-	{#if isLoading}
-		<div class="loading-screen" in:fade={{ duration: 500 }}>
+	{#await loadData()}
+		<div class="loading-screen" in:fade={{ duration: 377 }}>
 			Loading...
 		</div>
-	{:else}
-		<div class="game-container" in:fade={{ duration: 500 }}>
+	{:then} 
+		<div class="game-container" in:fade={{ duration: 377 }}>
 			<Game />
 		</div>
-	{/if}
+	{/await}
 </main>
 
 <style>

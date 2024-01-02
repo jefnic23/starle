@@ -6,20 +6,42 @@
 	import Game from "./components/Game.svelte";
 	import type { Starle } from "./types/starle.type";
 
+	let isLoading: boolean = true;
+
 	onMount(async () => {
 		// todo: save data to localStorage and prevent multiple api calls
-		let starles_data = await getAsync<Starle[]>(`/api/starle?seed=${getDateSeed()}`);
-		starles.set(starles_data);
+		try {
+			let starles_data = await getAsync<Starle[]>(`/api/starle?seed=${getDateSeed()}`);
+			$starles = starles_data;
 
-		let names_data = await getAsync<string[]>('/api/names');
-		names.set(names_data);
+			let names_data = await getAsync<string[]>('/api/names');
+			$names = names_data;
+		} catch (error) {
+            console.error('Error loading data:', error);
+            // Handle error appropriately
+        } finally {
+            isLoading = false; // Set loading to false when data is loaded or in case of error
+        }
 	});
 </script>
 
 <main>
-	<Game />
+	{#if isLoading}
+		<div class="loading-screen">
+			Loading...
+		</div>
+	{:else}
+		<Game />
+	{/if}
 </main>
 
 <style>
-	
+	.loading-screen {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-size: 2em;
+        /* Add more styles as needed */
+    }
 </style>

@@ -13,6 +13,7 @@
 
     let searchTerm: string = "";
     let suggestions: string[] = [];
+    let showSuggestions: boolean = false;
 
     // Reactive statement to update suggestions
     $: if (searchTerm.trim() !== '') {
@@ -50,6 +51,11 @@
     const selectSuggestion = (suggestion: string) => {
         searchTerm = suggestion;
         suggestions = []; // Optionally hide the suggestion list
+        showSuggestions = false;
+    }
+
+    const handleInput = () => {
+        showSuggestions = true;
     }
 </script>
 
@@ -64,12 +70,12 @@
         {/if}
     </div>
     <div class="searchbar">
-        <textarea bind:value={searchTerm} on:keydown={handleKeydown} placeholder="Search for an actor..."/>
+        <textarea bind:value={searchTerm} on:keydown={handleKeydown} on:input={handleInput} placeholder="Search for an actor..."/>
         <button on:click={handleSubmit} type="button" title="Send">
             <Fa icon={faPaperPlane} color='#89b4fa' />
         </button>
     </div>
-    {#if suggestions.length > 0}
+    {#if suggestions.length > 0 && showSuggestions}
         <ul>
             {#each suggestions as suggestion}
                 <li on:click={() => selectSuggestion(suggestion)}>{suggestion}</li>
